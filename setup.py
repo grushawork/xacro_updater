@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'xacro_updater = xacro_updater.xacro_updater:main'
+            'xacro_updater = xacro_updater.xacro_updater:main',
+            'json = xacro_updater.xacro_updater_json:main',
         ],
     },
 )
