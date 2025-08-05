@@ -32,7 +32,7 @@ def update_property_value(xml_file, property_name, new_value):
         print(f'There\'s no such property: {property_name}')
 
 
-class ArgParserNode(Node):
+class XacroUpdaterNode(Node):
     def __init__(self):
         super().__init__('xacro_updater')
 
@@ -78,7 +78,7 @@ class ArgParserNode(Node):
 def main(args=None):
     try:
         rclpy.init(args=args)
-        node = ArgParserNode()
+        node = XacroUpdaterNode()
         rclpy.spin(node)
         node.destroy_node()
         rclpy.shutdown()
