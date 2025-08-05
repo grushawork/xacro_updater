@@ -56,11 +56,22 @@ class ArgParserNode(Node):
                 print(f'{i}: Name: {arg["name"]}, Default: {arg["default"]}')
             
             print('\nEnter a number of xacro:arg to update its value: ', end='')
-            arg_num = int(input())
-            print(f'Enter a new value for "{xacro_args[arg_num]["name"]}" argument: ', end='')
+
+            try:
+                arg_idx = int(input())
+            except ValueError:
+                print('It\'s not a number, try again')
+                continue
+            
+            try:
+                print(f'Enter a new value for "{xacro_args[arg_idx]["name"]}" argument: ', end='')
+            except IndexError:
+                print('There\'s no such xacro-argument, try again\n')
+                continue
+            
             new_value = input()
             
-            update_default_value(filename, xacro_args[arg_num]['name'], new_value)
+            update_default_value(filename, xacro_args[arg_idx]['name'], new_value)
             print('Updated successfully\n')
 
 
