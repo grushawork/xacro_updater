@@ -1,3 +1,4 @@
+import os
 import sys
 from lxml import etree
 
@@ -49,6 +50,7 @@ class ArgParserNode(Node):
         while True:
             print('To update an xacro:arg value, press Enter')
             input()
+            os.system('clear')
 
             xacro_args = parse_xacro_args(filename)
 
