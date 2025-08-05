@@ -7,31 +7,29 @@ import rclpy.logging
 from rclpy.node import Node
 
 
-def parse_xacro_args(xml_file):
+def parse_xacro_properties(xml_file):
     tree = etree.parse(xml_file)
     root = tree.getroot()
-    args = []
+    properties = []
 
-    for arg in root.findall('.//{http://www.ros.org/wiki/xacro}arg'):
-        name = arg.get('name')
-        default = arg.get('default')
-        args.append({'name': name, 'default': default})
+    for property in root.findall('.//{http://www.ros.org/wiki/xacro}property'):
+        name = property.get('name')
+        value = property.get('value')
+        properties.append({'name': name, 'value': value})
 
-    return args
+    return properties
 
-def update_default_value(xml_file, arg_name, new_default):
+def update_property_value(xml_file, property_name, new_value):
     tree = etree.parse(xml_file)
     root = tree.getroot()
 
-    # Ищем тег <xacro:arg> с заданным именем
-    arg = root.find(f".//{{http://www.ros.org/wiki/xacro}}arg[@name='{arg_name}']")
+    property = root.find(f".//{{http://www.ros.org/wiki/xacro}}property[@name='{property_name}']")
     
-    if arg is not None:
-        arg.set('default', new_default)  # Обновляем значение атрибута default
-        # Сохраняем изменения в файл, сохраняя комментарии и форматирование
+    if property is not None:
+        property.set('value', new_value)
         tree.write(xml_file, pretty_print=True, xml_declaration=True, encoding='UTF-8')
     else:
-        print(f"Аргумент с именем '{arg_name}' не найден.")
+        print(f'There\'s no such property: {property_name}')
 
 
 class ArgParserNode(Node):
@@ -48,33 +46,33 @@ class ArgParserNode(Node):
             return
 
         while True:
-            print('To update an xacro:arg value, press Enter')
+            print('To update a property value, press Enter')
             input()
             os.system('clear')
 
-            xacro_args = parse_xacro_args(filename)
+            xacro_properties = parse_xacro_properties(filename)
 
-            for i, arg in enumerate(xacro_args):
-                print(f'{i}: Name: {arg["name"]}, Default: {arg["default"]}')
+            for i, property in enumerate(xacro_properties):
+                print(f'{i}: Name: {property["name"]}, Value: {property["value"]}')
             
-            print('\nEnter a number of xacro:arg to update its value: ', end='')
+            print('\nEnter index of property to update its value: ', end='')
 
             try:
-                arg_idx = int(input())
+                property_idx = int(input())
             except ValueError:
                 print('It\'s not a number, try again')
                 continue
             
             try:
-                print(f'Enter a new value for "{xacro_args[arg_idx]["name"]}" argument: ', end='')
+                print(f'Enter a new value for "{xacro_properties[property_idx]["name"]}" argument: ', end='')
             except IndexError:
-                print('There\'s no such xacro-argument, try again\n')
+                print('There\'s no such property, try again\n')
                 continue
             
             new_value = input()
             
-            update_default_value(filename, xacro_args[arg_idx]['name'], new_value)
-            print('Updated successfully\n')
+            update_property_value(filename, xacro_properties[property_idx]['name'], new_value)
+            print('\nUpdated successfully\n')
 
 
 def main(args=None):
