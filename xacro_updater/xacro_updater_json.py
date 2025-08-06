@@ -21,17 +21,20 @@ def parse_xacro_properties(xml_file):
     return properties
 
 
-def update_property_value(xml_file, property_name, new_value):
-    tree = etree.parse(xml_file)
+def update_properties(filename, update_data):
+    tree = etree.parse(filename)
     root = tree.getroot()
 
-    property = root.find(f".//{{http://www.ros.org/wiki/xacro}}property[@name='{property_name}']")
+    for obj, attrs in update_data.items():
+        for attr_name, attr_value in attrs.items():
+            property = root.find(f".//{{http://www.ros.org/wiki/xacro}}property[@name='{obj}_{attr_name}']")
+
+            if property is not None:
+                property.set('value', attr_value)
+            else:
+                print(f'There\'s no such property: {obj}_{attr_name}')
     
-    if property is not None:
-        property.set('value', new_value)
-        tree.write(xml_file, pretty_print=True, xml_declaration=True, encoding='UTF-8')
-    else:
-        print(f'There\'s no such property: {property_name}')
+    tree.write(filename, pretty_print=True, xml_declaration=True, encoding='UTF-8')
 
 
 class XacroUpdaterJSONNode(Node):
@@ -69,10 +72,7 @@ class XacroUpdaterJSONNode(Node):
                 print('Error: Could not decode JSON from the file.')
                 continue
 
-            for obj, attrs in update_data.items():
-                for attr_name, attr_value in attrs.items():
-                    update_property_value(filename, f'{obj}_{attr_name}', attr_value)
-            
+            update_properties(filename, update_data)
             print('\nUpdated successfully\n')
 
 
