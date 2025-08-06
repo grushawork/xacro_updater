@@ -64,7 +64,6 @@ class XacroUpdaterJSONNode(Node):
             try:
                 with open(json_update_filename, 'r') as file:
                     update_data = json.load(file)
-                    print(json.dumps(update_data, indent=4))
             except FileNotFoundError:
                 print(f'Error: The file "{json_update_filename}" was not found.')
                 continue
