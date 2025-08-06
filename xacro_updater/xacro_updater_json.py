@@ -52,8 +52,6 @@ class XacroUpdaterJSONNode(Node):
             input()
             os.system('clear')
 
-            xacro_properties = parse_xacro_properties(filename)
-
             print('Enter JSON-file name to update xacro-file properties: ', end='')
             json_update_filename = input()
 
